@@ -5,15 +5,15 @@ var config = require('../../config/dev');
 var _ = require('underscore');
 
 exports.addRule = function(req, res, next) {
-	var new_rule = req.body || {};
+	var newRule = req.body || {};
 	var error_msg;
-	if (!new_rule.premise) {
+	if (!newRule.premise) {
 		error_msg = '请输入前提';
-	} else if (!new_rule.conclusion) {
+	} else if (!newRule.conclusion) {
 		error_msg = '请输入结论';
-	} else if (!new_rule.threshold) {
+	} else if (!newRule.threshold) {
 		error_msg = '请输入规则阈值';
-	} else if (!new_rule.reliability) {
+	} else if (!newRule.reliability) {
 		error_msg = '请输入规则可信度';
 	}
 	if (error_msg) {
@@ -22,7 +22,7 @@ exports.addRule = function(req, res, next) {
 			msg: error_msg
 		});
 	} else {
-		var _rule = new Rule(new_rule);
+		var _rule = new Rule(newRule);
 		_rule.save().then(function(data) {
 			res.send({
 				ok: true,

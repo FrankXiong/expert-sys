@@ -5,6 +5,7 @@ var _ = require('underscore');
 var extract = require('../../core/extract');
 var inference = require('../../core/inference');
 var xss = require('xss');
+var User = require('../../model/user');
 
 exports.addStatus = function(req, res, next) {
 	// pretend xss attack
@@ -29,29 +30,35 @@ exports.addStatus = function(req, res, next) {
 
 exports.addFeature = function(req, res, next) {
 	var inputFeature = req.body;
+	var uid = req.cookies.uid;
 	var errorMsg;
-	var facts = {};
-	if (!(inputFeature.behaviour && inputFeature.emotion && inputFeature.body && inputFeature.habit)) {
-		errorMsg = '输入参数不完整';
-	}
-	if (errorMsg) {
-		res.status(422).send({
+	var user = {
+		uid: uid
+	};
+	var facts = Object.assign(user, inputFeature);
+	var diagnosis;
+	inference.diagnosis(facts).then(function(result) {
+		console.log(result);
+		diagnosis = Object.assign(inputFeature, result);
+		return User.findOne({
+			_id: result.uid
+		});
+	}).then(function(user) {
+		diagnosis.created = new Date();
+		var _user = Object.assign(user, user.historys.push(diagnosis));
+		console.log(_user);
+		return _user.save();
+	}).then(function(user) {
+		return res.send({
+			ok: true,
+			data: user
+		});
+	}).catch(function(err) {
+		return res.send({
 			ok: false,
-			msg: errorMsg
+			msg: err.message
 		});
-	} else {
-		// test...
-		facts.name = 'aaa';
-		facts.emotion = 'dispoint';
-		facts.action = 'alone';
-		facts.habit = 'insomnia';
-		inference.diagnosis(facts).then(function(result) {
-			res.send({
-				ok: true,
-				data: result
-			});
-		});
-	}
+	});
 }
 
 exports.getResult = function(req, res, next) {
@@ -65,5 +72,5 @@ exports.getResult = function(req, res, next) {
 			advise: '江信江疑',
 			reliability: '0.9'
 		}
-	})
+	});
 }

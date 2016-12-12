@@ -19,15 +19,15 @@ exports.getMe = function(req, res) {
 exports.updateMe = function(req, res, next) {
 	var uname = req.body.uname ? req.body.uname.replace(/(^\s+)|(\s+$)/g, "") : '';
 	var NICKNAME_REGEXP = /^[(\u4e00-\u9fa5)0-9a-zA-Z\_\s@]+$/;
-	var error_msg;
+	var errorMsg;
 	if (uname === '') {
-		error_msg = '呢称不能为空';
+		errorMsg = '呢称不能为空';
 	} else if (uname.length <= 2 || uname.length > 15 || !NICKNAME_REGEXP.test(uname)) {
-		error_msg = '用户名不合法';
+		errorMsg = '用户名不合法';
 	}
-	if (error_msg) {
+	if (errorMsg) {
 		return res.status(422).send({
-			msg: error_msg
+			msg: errorMsg
 		});
 	}
 
@@ -52,17 +52,17 @@ exports.updateMe = function(req, res, next) {
 exports.login = function(req, res, next) {
 	var uname = req.body.uname;
 	var pass = req.body.pass;
-	var error_msg;
+	var errorMsg;
 	if (uname === '') {
-		error_msg = '用户名不能为空';
+		errorMsg = '用户名不能为空';
 	} else if (pass === '') {
-		error_msg = '密码不能为空';
+		errorMsg = '密码不能为空';
 	}
-	if (error_msg) {
+	if (errorMsg) {
 		//HTTP code 422: Unprocessable Entity
 		return res.status(422).send({
 			ok: false,
-			msg: error_msg
+			msg: errorMsg
 		});
 	}
 	User.findOne({
@@ -98,33 +98,33 @@ exports.login = function(req, res, next) {
 }
 
 exports.reg = function(req, res, next) {
-	var new_user = req.body;
+	var newUser = req.body;
 	var uname = req.body.uname ? req.body.uname.replace(/(^\s+)|(\s+$)/g, "") : '';
-	new_user.uname = uname;
+	newUser.uname = uname;
 	var sex = req.body.sex;
 	var age = parseInt(req.body.age, 10);
 	var pass = req.body.pass;
 	var NICKNAME_REGEXP = /^[(\u4e00-\u9fa5)0-9a-zA-Z\_\s@]+$/;
-	var error_msg;
+	var errorMsg;
 	if (!uname) {
-		error_msg = "用户名不能为空";
+		errorMsg = "用户名不能为空";
 	} else if (!pass) {
-		error_msg = '密码不能为空';
+		errorMsg = '密码不能为空';
 	} else if (!sex) {
-		error_msg = "性别不能为空";
+		errorMsg = "性别不能为空";
 	} else if (!age) {
-		error_msg = '年龄不能为空';
+		errorMsg = '年龄不能为空';
 	} else if (uname.length <= 2 || uname.length > 15 || !NICKNAME_REGEXP.test(uname)) {
-		error_msg = "用户名不合法";
+		errorMsg = "用户名不合法";
 	} else if (age < 1 || age > 120) {
-		error_msg = "年龄不合法";
+		errorMsg = "年龄不合法";
 	} else if (pass.length < 6) {
-		error_msg = '密码不得短于6位';
+		errorMsg = '密码不得短于6位';
 	}
-	if (error_msg) {
+	if (errorMsg) {
 		return res.status(422).send({
 			ok: false,
-			msg: error_msg
+			msg: errorMsg
 		});
 	}
 	User.findOne({
@@ -137,7 +137,7 @@ exports.reg = function(req, res, next) {
 				msg: '该用户名已存在'
 			});
 		} else {
-			User.create(new_user).then(function(user) {
+			User.create(newUser).then(function(user) {
 				if (user) {
 					res.send({
 						ok: true,

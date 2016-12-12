@@ -5,20 +5,20 @@ var config = require('../../config/dev');
 var _ = require('underscore');
 
 exports.addFeature = function(req, res, next) {
-	var new_feature = req.body || {};
-	var error_msg;
-	if (!new_feature.type) {
-		error_msg = '请选择一个特征类型';
-	} else if (!new_feature.content) {
-		error_msg = '请输入特征内容';
+	var newFeature = req.body || {};
+	var errorMsg;
+	if (!newFeature.type) {
+		errorMsg = '请选择一个特征类型';
+	} else if (!newFeature.content) {
+		errorMsg = '请输入特征内容';
 	}
-	if (error_msg) {
+	if (errorMsg) {
 		res.status(422).send({
 			ok: false,
-			msg: error_msg
+			msg: errorMsg
 		});
 	} else {
-		var _feature = new Feature(new_feature);
+		var _feature = new Feature(newFeature);
 		_feature.save().then(function(data) {
 			res.send({
 				ok: true,
@@ -71,7 +71,7 @@ exports.getAllFeatures = function(req, res, next) {
 				case 'body':
 					features[1].push(item);
 					break;
-				case 'behaviour':
+				case 'behavior':
 					features[2].push(item);
 					break;
 				case 'habit':

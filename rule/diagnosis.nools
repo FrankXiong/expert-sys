@@ -1,43 +1,105 @@
 //create new classes;
 //All classes will use default constructor where you pass in
 //an object with key value pairs of the value defined in the define object
-//i.e new UserCase({name : "bob", fever : "high", spots : false, rash : true, soreThroat : false, innoculated : true});
 define UserCase {
-    name : null,
+    uid : null,
     emotion : null,
-    action : null,
+    body : null,
+    behavior : null,
     habit : null
 }
 
 define Diagnosis {
-    name : null,
-    diagnosis : null
+    uid : null,
+    conclusion : null,
+    reliability : null
 }
 
 define Advise {
-    name : null,
+    uid : null,
     advise : null
 }
 
 
 rule Depression {
     when {
-        p : UserCase p.emotion in ['dispoint', 'repression', 'pessimism'] && p.action in ['alone', 'tear'] {name : n};
+        p : UserCase p.emotion in ['dispoint', 'repression', 'pessimism'] && p.action in ['alone', 'tear'] {uid : n};
     }
     then {
-        var d = new Diagnosis({name : n, diagnosis : "抑郁症"});
+        var d = new Diagnosis({uid : n, conclusion : "抑郁症", reliability: '0.8'});
         emit("diagnosis", d);
         assert(d);
     }
 }
 
-rule Healthy {
+//多动症
+rule StrongHyperactivity {
+  salience: 100;
+  when {
+    p: UserCase p.emotion.name in ['急躁', '冲动'] && p.emotion.value > 80 && p.body.name in ['注意力缺失'] && p.body.value > 80 && p.behavior.name in ['小动作多', '辱骂他人', '打伤朋友', '破坏物品'] && p.behavior.value > 80 { uid : n };
+  }
+  then {
+    var d = new Diagnosis({uid : n, conclusion : '多动症', reliability: '0.8'});
+    emit('diagnosis', d);
+    assert(d);
+  }
+}
+rule LightHyperactivity {
+  salience: 10;
+  when {
+    p: UserCase p.emotion.name in ['急躁', '冲动'] && p.emotion.value > 40 && p.body.name in ['注意力缺失'] && p.body.value > 40 && p.behavior.name in ['小动作多', '辱骂他人', '打伤朋友', '破坏物品'] && p.behavior.value > 40 { uid : n };
+  }
+  then {
+    var d = new Diagnosis({uid : n, conclusion : '多动症', reliability: '0.4'});
+    emit('diagnosis', d);
+    assert(d);
+  }
+}
+rule CommonHyperactivity {
+  salience: 50;
+  when {
+    p: UserCase p.emotion.name in ['急躁', '冲动'] && p.emotion.value > 60 && p.body.name in ['注意力缺失'] && p.body.value > 60 && p.behavior.name in ['小动作多', '辱骂他人', '打伤朋友', '破坏物品'] && p.behavior.value > 60 { uid : n };
+  }
+  then {
+    var d = new Diagnosis({uid : n, conclusion : '多动症', reliability: '0.6'});
+    emit('diagnosis', d);
+    assert(d);
+  }
+}
+rule AdivceHyperactivity {
     when {
-        p: UserCase {name : n};
-        not(d : Diagnosis d.name == n);
+        d : Diagnosis d.conclusion in ['多动症'] {uid : n};
     }
     then {
-        var d = new Diagnosis({name : n, diagnosis : "健康"});
+        var t = new Advise({uid : n, advise : "教师和家长需要针对患者的特点进行有效的行为管理和心理教育，避免歧视、体罚或其他粗暴的教育方法，恰当运用表扬和鼓励的方式提高患者的自信心和自觉性。当ADHD患儿的父母和校方确定患儿的病情或行为已经影响患儿参加学习的能力时，则患儿可以在学校里接受干预治疗。可以将患儿的座位安排在老师附近，以减少患儿在上课时的注意力分散，课程安排时要考虑到给予患者充分的活动时间。"});
+        emit("advise", t);
+        assert(t);
+    }
+}
+
+//自闭症
+//精神分裂症
+//抑郁症
+//网络综合症
+//偷窃癖
+//自恋癖
+//洁癖
+//躁狂症
+//强迫症
+//社交恐惧症
+//单一恐惧症
+//考试综合症
+//学习逃避症
+//恋爱挫折综合症
+//智力障碍
+
+rule Healthy {
+    when {
+        p: UserCase {uid : n};
+        not(d : Diagnosis d.uid == n);
+    }
+    then {
+        var d = new Diagnosis({uid : n, conclusion : "健康", reliability: '0.8'});
         emit("diagnosis", d);
         assert(d);
     }
@@ -45,10 +107,10 @@ rule Healthy {
 
 rule TryNewThings {
     when {
-        d : Diagnosis d.diagnosis in ['抑郁症'] {name : n};
+        d : Diagnosis d.diagnosis in ['抑郁症'] {uid : n};
     }
     then {
-        var t = new Advise({name : n, advise : "要积极的去尝试以前没有做过的事情，要积极的开辟新的生活园地，使自己的生活更充实。"});
+        var t = new Advise({uid : n, advise : "要积极的去尝试以前没有做过的事情，要积极的开辟新的生活园地，使自己的生活更充实。"});
         emit("advise", t);
         assert(t);
     }
@@ -56,10 +118,10 @@ rule TryNewThings {
 
 rule Keep {
     when {
-        d : Diagnosis d.diagnosis in ['healthy'] {name : n};
+        d : Diagnosis d.diagnosis in ['healthy'] {uid : n};
     }
     then {
-        var t = new Advise({name : n, advise : "请继续保持。"});
+        var t = new Advise({uid : n, advise : "请继续保持。"});
         emit("advise", t);
         assert(t);
     }

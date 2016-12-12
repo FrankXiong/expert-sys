@@ -5,6 +5,7 @@ var UserCase = flow.getDefined('UserCase');
 
 exports.diagnosis = function(u) {
 	var d, a;
+	var fires = [];
 	return flow.getSession(new UserCase(u))
 		.on("diagnosis", function(result) {
 			d = result;
@@ -14,15 +15,17 @@ exports.diagnosis = function(u) {
 		})
 		.match().then(function() {
 			if (d && a) {
-        console.log('hhh');
 				return {
-					uname: d.name,
-					conclusion: d.diagnosis,
+					uid: d.uid,
+					conclusion: d.conclusion,
+					reliability: d.reliability,
 					advise: a.advise
 				}
 			} else {
 				return {
-					msg: '暂无诊断结果'
+					uid: u.uid,
+					conclusion: '暂无诊断结果',
+					advise: '无'
 				}
 			}
 		});
