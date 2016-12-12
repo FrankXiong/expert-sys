@@ -1,0 +1,66 @@
+//create new classes;
+//All classes will use default constructor where you pass in
+//an object with key value pairs of the value defined in the define object
+//i.e new UserCase({name : "bob", fever : "high", spots : false, rash : true, soreThroat : false, innoculated : true});
+define UserCase {
+    name : null,
+    emotion : null,
+    action : null,
+    habit : null
+}
+
+define Diagnosis {
+    name : null,
+    diagnosis : null
+}
+
+define Advise {
+    name : null,
+    advise : null
+}
+
+
+rule Depression {
+    when {
+        p : UserCase p.emotion in ['dispoint', 'repression', 'pessimism'] && p.action in ['alone', 'tear'] {name : n};
+    }
+    then {
+        var d = new Diagnosis({name : n, diagnosis : "抑郁症"});
+        emit("diagnosis", d);
+        assert(d);
+    }
+}
+
+rule Healthy {
+    when {
+        p: UserCase {name : n};
+        not(d : Diagnosis d.name == n);
+    }
+    then {
+        var d = new Diagnosis({name : n, diagnosis : "健康"});
+        emit("diagnosis", d);
+        assert(d);
+    }
+}
+
+rule TryNewThings {
+    when {
+        d : Diagnosis d.diagnosis in ['抑郁症'] {name : n};
+    }
+    then {
+        var t = new Advise({name : n, advise : "要积极的去尝试以前没有做过的事情，要积极的开辟新的生活园地，使自己的生活更充实。"});
+        emit("advise", t);
+        assert(t);
+    }
+}
+
+rule Keep {
+    when {
+        d : Diagnosis d.diagnosis in ['healthy'] {name : n};
+    }
+    then {
+        var t = new Advise({name : n, advise : "请继续保持。"});
+        emit("advise", t);
+        assert(t);
+    }
+}
