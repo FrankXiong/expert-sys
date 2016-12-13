@@ -3,6 +3,7 @@ var Rule = require('../../model/rule');
 var auth = require('../auth/');
 var config = require('../../config/dev');
 var _ = require('underscore');
+var compiler = require('../../core/compiler');
 
 exports.addRule = function(req, res, next) {
 	var newRule = req.body || {};
@@ -24,6 +25,12 @@ exports.addRule = function(req, res, next) {
 	} else {
 		var _rule = new Rule(newRule);
 		_rule.save().then(function(data) {
+			compiler.run(data, function(res) {
+				console.log('line34: success');
+			}, function() {
+				console.log('line36: fail');
+			});
+		}).then(function(data) {
 			res.send({
 				ok: true,
 				data: data
