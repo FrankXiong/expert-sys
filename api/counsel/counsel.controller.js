@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var auth = require('../auth/');
-var config = require('../../config/dev');
+var config = require('../../config/index');
 var _ = require('underscore');
 var extract = require('../../core/extract');
 var inference = require('../../core/inference');
@@ -30,18 +30,19 @@ exports.addStatus = function(req, res, next) {
 
 exports.addFeature = function(req, res, next) {
 	var inputFeature = req.body;
-	var uid = req.cookies.uid;
+	var uname = req.cookies.uname;
 	var errorMsg;
 	var user = {
-		uid: uid
+		name: uname
 	};
 	var facts = Object.assign(user, inputFeature);
+	console.log(facts);
 	var diagnosis;
 	inference.diagnosis(facts).then(function(result) {
 		console.log(result);
 		diagnosis = Object.assign(inputFeature, result);
 		return User.findOne({
-			_id: result.uid
+			uname: result.uname
 		});
 	}).then(function(user) {
 		diagnosis.created = new Date();
@@ -62,15 +63,32 @@ exports.addFeature = function(req, res, next) {
 }
 
 exports.getResult = function(req, res, next) {
-	var rid = req.params.rid;
+	var uname = req.params.uname;
+	console.log(uname);
 	// TODO: query result db by rid
-	res.send({
-		ok: true,
-		data: {
-			type: '未知类型',
-			conclusion: '无可奉告',
-			advise: '江信江疑',
-			reliability: '0.9'
-		}
-	});
+	if (uname) {
+		User.findByName(uname).then(function(user) {
+			if (user && user.historys) {
+				res.send({
+					ok: true,
+					data: user.historys.pop()
+				});
+			} else {
+				res.status(401).send({
+					ok: false,
+					msg: 'this user is not in db'
+				});
+			}
+		}).catch(function(err) {
+			res.status(500).send({
+				ok: false,
+				msg: err.message
+			});
+		});
+	} else {
+		res.status(422).send({
+			ok: false,
+			msg: 'missing request params'
+		});
+	}
 }

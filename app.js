@@ -8,12 +8,12 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var config = require('./config/dev');
+var config = require('./config/index');
 var history = require('connect-history-api-fallback');
 
 var app = express();
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 console.log(process.env.NODE_ENV);
 
 // Use native promises

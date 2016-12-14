@@ -6,6 +6,6 @@ var router = express.Router();
 
 router.post('/feature', controller.addFeature);
 router.post('/status', controller.addStatus);
-router.get('/:rid', controller.getResult);
+router.get('/:uname', controller.getResult);
 
 module.exports = router;

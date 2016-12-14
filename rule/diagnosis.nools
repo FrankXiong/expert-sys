@@ -1,5 +1,5 @@
 define UserCase {
-    uid : null,
+    name : null,
     emotion : null,
     body : null,
     behavior : null,
@@ -7,22 +7,22 @@ define UserCase {
 }
 
 define Diagnosis {
-    uid : null,
+    name : null,
     conclusion : null
 }
 
 define Advise {
-    uid : null,
+    name : null,
     advise : null
 }
 
 rule Healthy {
     when {
-        p: UserCase {uid : n};
-        not(d : Diagnosis d.uid == n);
+        p: UserCase {name : n};
+        not(d : Diagnosis d.name == n);
     }
     then {
-        var d = new Diagnosis({uid : n, conclusion : "健康"});
+        var d = new Diagnosis({name : n, conclusion : "健康"});
         emit("diagnosis", d);
         assert(d);
     }
@@ -30,32 +30,32 @@ rule Healthy {
 
 rule Nothing {
     when {
-        d : Diagnosis d.conclusion == '健康' {uid : n};
+        d : Diagnosis d.conclusion == '健康' {name : n};
     }
     then {
-        var t = new Advise({uid : n, advise : "暂无建议"});
+        var t = new Advise({name : n, advise : "暂无建议"});
         emit("treatment", t);
         assert(t);
     }
 }
 
-rule jjj {
-        when {
-          p: UserCase p.emotion.name in ["aaa"] && p.emotion.value >= 18 && p.body.name in ["bbb"] && p.body.value >= 52&& p.behavior.name in ["ccc"] && p.behavior.value >= 63] {uid: n};
-        }
-        then {
-          var d = new Diagnosis({uid : n, conclusion : "jjj", reliability: 0.6});
-          emit("diagnosis", d);
-          assert(d);
-        }
-      }
-      rule undefined {
-        when {
-            d : Diagnosis d.diagnosis in ["jjj"] {uid : n};
-        }
-        then {
-            var t = new Advise({uid : n, advise : "请继续保持。"});
-            emit("advise", t);
-            assert(t);
-        }
-      }
+rule 多动症 {
+  when {
+    p: UserCase p.emotion.name in ["急躁"] && p.emotion.value >= 38 && p.body.name in ["注意力缺失"] && p.body.value >= 40&& p.behavior.name in ["小动作多"] && p.behavior.value >= 43 {name: n};
+  }
+  then {
+    var d = new Diagnosis({name : n, conclusion : "多动症", reliability: 0.6});
+    emit("diagnosis", d);
+    assert(d);
+  }
+}
+rule AdviseHyperactivity {
+  when {
+      d : Diagnosis d.diagnosis in ["多动症"] {name : n};
+  }
+  then {
+      var t = new Advise({name : n, advise : "应少食含酷氨酸的食物，如挂面、糕点等。少食含甲基水杨酸的食物，如西红柿、苹果、桔子等。饮食中不要加入辛辣的调味品，如胡椒之类，也不宜使用酒石黄色素，如贝类、大红是、柑榄等食物。"});
+      emit("advise", t);
+      assert(t);
+  }
+}

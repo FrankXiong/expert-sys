@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var User = require('../../model/user');
 var auth = require('../auth/');
-var config = require('../../config/dev')
+var config = require('../../config/index');
 
 exports.getMe = function(req, res) {
-	var uid = req.params.uid;
-	User.findById(uid).then(function(user) {
+	var uname = req.params.uname;
+	User.findByName(uname).then(function(user) {
 		return res.status(200).send({
 			ok: true,
 			data: user
@@ -65,36 +65,42 @@ exports.login = function(req, res, next) {
 			msg: errorMsg
 		});
 	}
-	User.findOne({
-		uname: uname
-	}).then(function(user) {
-		console.log(user);
-		var valid = user.comparePass(pass);
-		if (!valid) {
-			res.status(422).send({
-				ok: false,
-				msg: '密码错误'
-			});
+	User.findByName(uname).then(function(user) {
+		if (user) {
+			var valid = user.comparePass(pass);
+			if (!valid) {
+				res.status(422).send({
+					ok: false,
+					msg: '密码错误'
+				});
+			} else {
+				var token = auth.signToken();
+				var data = {
+					user: user,
+					token: token
+				};
+				res.cookie('uid', user._id, config.cookie);
+				res.cookie('uname', user.uname, config.cookie);
+				res.cookie('role', user.role, config.cookie);
+				res.cookie('token', token, config.cookie);
+				res.send({
+					ok: true,
+					msg: '',
+					data: data
+				});
+			}
 		} else {
-			var token = auth.signToken();
-			var data = {
-				user: user,
-				token: token
-			};
-			console.log(data);
 			res.send({
-				ok: true,
-				msg: '',
-				data: data
+				ok: false,
+				msg: '此帐号尚未注册'
 			});
 		}
 	}).catch(function(err) {
-		console.log('ERROR: ' + err);
-		res.status(500).send({
+		res.status(422).send({
 			ok: false,
-			msg: err
+			msg: err.message
 		});
-	})
+	});
 }
 
 exports.reg = function(req, res, next) {

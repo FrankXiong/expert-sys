@@ -16,14 +16,14 @@ exports.diagnosis = function(u) {
 		.match().then(function() {
 			if (d && a) {
 				return {
-					uid: d.uid,
+					uname: d.name,
 					conclusion: d.conclusion,
 					reliability: d.reliability,
 					advise: a.advise
 				}
 			} else {
 				return {
-					uid: u.uid,
+					uname: u.name,
 					conclusion: '暂无诊断结果',
 					advise: '无'
 				}

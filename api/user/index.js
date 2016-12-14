@@ -10,7 +10,7 @@ var router = express.Router();
 // router.put('/:id/updateUser', auth.hasRole('admin'), controller.updateUser);
 
 //前台用户更新信息
-router.get('/:uid', controller.getMe);
+router.get('/:uname', controller.getMe);
 router.post('/login', controller.login)
 router.post('/reg', controller.reg)
 router.get('/list', auth.hasRole('admin'), controller.getUserList)

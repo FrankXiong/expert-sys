@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var _ = require('underscore');
 var Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
@@ -50,6 +51,13 @@ UserSchema.methods = {
 	comparePass: function(text) {
 		return text === this.pass;
 	}
+}
+
+// 静态方法
+UserSchema.statics = {
+	findByName: function(uname){
+    return this.findOne({uname: uname});
+  }
 }
 
 UserSchema.set('token', {

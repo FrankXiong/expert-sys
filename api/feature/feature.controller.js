@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Feature = require('../../model/feature');
 var auth = require('../auth/');
-var config = require('../../config/dev');
+var config = require('../../config/index');
 var _ = require('underscore');
 
 exports.addFeature = function(req, res, next) {

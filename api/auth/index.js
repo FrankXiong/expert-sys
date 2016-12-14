@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-var config = require('../../config/dev');
+var config = require('../../config/index');
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var compose = require('composable-middleware');

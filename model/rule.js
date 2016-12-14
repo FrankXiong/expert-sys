@@ -10,6 +10,10 @@ var RuleSchema = new Schema({
 		type: String,
 		default: '无可奉告'
 	},
+	advise: {
+		type: String,
+		default: '无可奉告'
+	},
 	reliability: {
 		type: Number,
 		default: 1

@@ -1,34 +1,37 @@
 var mongoose = require('mongoose');
 var Rule = require('../../model/rule');
 var auth = require('../auth/');
-var config = require('../../config/dev');
+var config = require('../../config/index');
 var _ = require('underscore');
 var compiler = require('../../core/compiler');
 
 exports.addRule = function(req, res, next) {
 	var newRule = req.body || {};
-	var error_msg;
+	var errorMsg;
 	if (!newRule.premise) {
-		error_msg = '请输入前提';
+		errorMsg = '请输入前提';
 	} else if (!newRule.conclusion) {
-		error_msg = '请输入结论';
+		errorMsg = '请输入结论';
+	} else if (!newRule.advise) {
+		errorMsg = '请输入建议';
 	} else if (!newRule.threshold) {
-		error_msg = '请输入规则阈值';
+		errorMsg = '请输入规则阈值';
 	} else if (!newRule.reliability) {
-		error_msg = '请输入规则可信度';
+		errorMsg = '请输入规则可信度';
 	}
-	if (error_msg) {
+	if (errorMsg) {
 		res.status(422).send({
 			ok: false,
-			msg: error_msg
+			msg: errorMsg
 		});
 	} else {
 		var _rule = new Rule(newRule);
+		console.log(_rule);
 		_rule.save().then(function(data) {
 			compiler.run(data, function(res) {
-				console.log('line34: success');
+				console.log('compile success');
 			}, function() {
-				console.log('line36: fail');
+				console.log('compile fail');
 			});
 		}).then(function(data) {
 			res.send({

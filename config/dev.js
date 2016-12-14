@@ -8,5 +8,9 @@ module.exports = {
     secret: 'expertsys'
   },
   //用户角色种类
-  userRoles: ['user', 'admin']
+  userRoles: ['user', 'admin'],
+  cookie: {
+    maxAge: 90000,
+    domain: 'localhost'
+  }
 }
