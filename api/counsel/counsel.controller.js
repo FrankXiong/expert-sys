@@ -36,30 +36,34 @@ exports.addFeature = function(req, res, next) {
 		name: uname
 	};
 	var facts = Object.assign(user, inputFeature);
-	console.log(facts);
 	var diagnosis;
 	inference.diagnosis(facts).then(function(result) {
 		console.log(result);
-		diagnosis = Object.assign(inputFeature, result);
-		return User.findOne({
-			uname: result.uname
-		});
-	}).then(function(user) {
-		diagnosis.created = new Date();
-		var _user = Object.assign(user, user.historys.push(diagnosis));
-		console.log(_user);
-		return _user.save();
-	}).then(function(user) {
 		return res.send({
 			ok: true,
-			data: user
-		});
-	}).catch(function(err) {
-		return res.send({
-			ok: false,
-			msg: err.message
+			data: result
 		});
 	});
+	// inference.diagnosis(facts).then(function(result) {
+	// 	diagnosis = Object.assign(inputFeature, result);
+	// 	return User.findOne({
+	// 		uname: result.uname
+	// 	});
+	// }).then(function(user) {
+	// 	diagnosis.created = new Date();
+	// 	var _user = Object.assign(user, user.historys.push(diagnosis));
+	// 	return _user.save();
+	// }).then(function(user) {
+	// 	return res.send({
+	// 		ok: true,
+	// 		data: user
+	// 	});
+	// }).catch(function(err) {
+	// 	return res.send({
+	// 		ok: false,
+	// 		msg: err.message
+	// 	});
+	// });
 }
 
 exports.getResult = function(req, res, next) {

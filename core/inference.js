@@ -14,6 +14,8 @@ exports.diagnosis = function(u) {
 			a = result;
 		})
 		.match().then(function() {
+			console.log('d: ' + d);
+			console.log('a: ' + a);
 			if (d && a) {
 				return {
 					uname: d.name,

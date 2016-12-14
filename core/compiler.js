@@ -8,9 +8,9 @@ function generateNools(rule) {
   if (rule) {
     // TODO: compute match rate
     noolText = `
-rule ${rule.conclusion} {
+rule ${rule.name} {
   when {
-    p: UserCase p.emotion.name in ["${rule.premise[0].name}"] && p.emotion.value >= ${rule.premise[0].value} && p.body.name in ["${rule.premise[1].name}"] && p.body.value >= ${rule.premise[1].value}&& p.behavior.name in ["${rule.premise[2].name}"] && p.behavior.value >= ${rule.premise[2].value} {name: n};
+    p: UserCase p.emotion.name in ["${rule.premise[0].name}"] && p.emotion.value >= ${rule.premise[0].value} && p.body.name in ["${rule.premise[1].name}"] && p.body.value >= ${rule.premise[1].value} && p.behavior.name in ["${rule.premise[2].name}"] && p.behavior.value >= ${rule.premise[2].value} {name: n};
   }
   then {
     var d = new Diagnosis({name : n, conclusion : "${rule.conclusion}", reliability: ${rule.reliability}});
@@ -18,9 +18,9 @@ rule ${rule.conclusion} {
     assert(d);
   }
 }
-rule ${rule.advise} {
+rule ${rule.aname} {
   when {
-      d : Diagnosis d.diagnosis in ["${rule.conclusion}"] {name : n};
+      d : Diagnosis d.conclusion in ["${rule.conclusion}"] {name : n};
   }
   then {
       var t = new Advise({name : n, advise : "${rule.advise}"});

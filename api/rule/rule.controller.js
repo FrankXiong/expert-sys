@@ -6,7 +6,9 @@ var _ = require('underscore');
 var compiler = require('../../core/compiler');
 
 exports.addRule = function(req, res, next) {
-	var newRule = req.body || {};
+	var ruleName = 'rule' + (Math.random() * 100000000);
+	var adviseName = 'advise' + (Math.random() * 100000000);
+	var newRule = Object.assign(req.body, { name: ruleName, aname: adviseName }) || {};
 	var errorMsg;
 	if (!newRule.premise) {
 		errorMsg = '请输入前提';

@@ -8,7 +8,8 @@ define UserCase {
 
 define Diagnosis {
     name : null,
-    conclusion : null
+    conclusion : null,
+    reliability : null
 }
 
 define Advise {
@@ -39,9 +40,9 @@ rule Nothing {
     }
 }
 
-rule 多动症 {
+rule Hyperactivity {
   when {
-    p: UserCase p.emotion.name in ["急躁"] && p.emotion.value >= 38 && p.body.name in ["注意力缺失"] && p.body.value >= 40&& p.behavior.name in ["小动作多"] && p.behavior.value >= 43 {name: n};
+    p: UserCase p.emotion.name in ["急躁"] && p.emotion.value >= 38 && p.body.name in ["注意力缺失"] && p.body.value >= 40 && p.behavior.name in ["小动作多"] && p.behavior.value >= 43 {name: n};
   }
   then {
     var d = new Diagnosis({name : n, conclusion : "多动症", reliability: 0.6});
@@ -49,12 +50,34 @@ rule 多动症 {
     assert(d);
   }
 }
-rule AdviseHyperactivity {
+rule AdviseHighHyperactivity {
   when {
-      d : Diagnosis d.diagnosis in ["多动症"] {name : n};
+      d : Diagnosis d.conclusion in ["多动症"] && d.reliability >= 0.8 {name : n};
   }
   then {
-      var t = new Advise({name : n, advise : "应少食含酷氨酸的食物，如挂面、糕点等。少食含甲基水杨酸的食物，如西红柿、苹果、桔子等。饮食中不要加入辛辣的调味品，如胡椒之类，也不宜使用酒石黄色素，如贝类、大红是、柑榄等食物。"});
+      var t = new Advise({name : n, advise : "极有可能患有多动症。应少食含酷氨酸的食物，如挂面、糕点等。"});
+      emit("advise", t);
+      assert(t);
+  }
+}
+
+rule AdviseCommonHyperactivity {
+  when {
+      d : Diagnosis d.conclusion in ["多动症"] && d.reliability >= 0.6 {name : n};
+  }
+  then {
+      var t = new Advise({name : n, advise : "很有可能患有多动症。少食含甲基水杨酸的食物，如西红柿、苹果、桔子等。"});
+      emit("advise", t);
+      assert(t);
+  }
+}
+
+rule AdviseLowHyperactivity {
+  when {
+      d : Diagnosis d.conclusion in ["多动症"] && d.reliability >= 0.2 {name : n};
+  }
+  then {
+      var t = new Advise({name : n, advise : "可能患有多动症。饮食中不要加入辛辣的调味品，如胡椒之类，也不宜使用酒石黄色素，如贝类、大红是、柑榄等食物。"});
       emit("advise", t);
       assert(t);
   }

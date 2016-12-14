@@ -3,12 +3,18 @@ var Schema = mongoose.Schema;
 var moment = require('moment');
 
 var RuleSchema = new Schema({
+	name: {
+		type: String
+	},
 	premise: {
 		type: Array
 	},
 	conclusion: {
 		type: String,
 		default: '无可奉告'
+	},
+	aname: {
+		type: String
 	},
 	advise: {
 		type: String,
