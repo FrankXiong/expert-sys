@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "export NODE_ENV=prod && forever start -l forever.log --append -o ./logs/out.log -e ./logs/err.log app.js",
+    "stop": "forever stop app.js",
+    "restart": "forever restart -l forever.log --append -o ./logs/out.log -e ./logs/err.log app.js",
+    "dev": "export NODE_ENV=dev && nodemon app.js",
   },
   "dependencies": {
     "bluebird": "^3.4.6",

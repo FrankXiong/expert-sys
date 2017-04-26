@@ -8,13 +8,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var config = require('./config/index');
+var config = require('./config');
 var history = require('connect-history-api-fallback');
 
 var app = express();
 
-process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
-console.log(process.env.NODE_ENV);
+var env = process.env.NODE_ENV;
+console.log(env);
 
 // Use native promises
 mongoose.Promise = global.Promise;
@@ -61,7 +61,7 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
 	// set locals, only providing error in development
 	res.locals.message = err.message;
-	res.locals.error = req.app.get('env') === 'development' ? err : {};
+	res.locals.error = req.app.get('env') === 'dev' ? err : {};
 
 	// render the error page
 	res.status(err.status || 500);
