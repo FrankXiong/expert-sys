@@ -42,9 +42,9 @@ app.use(session({
 	})
 }));
 
-app.use(express.static(path.join(__dirname, '/')))
+app.use(express.static(path.join(__dirname, '/public')))
 
-app.get("/", function(req, res) {
+app.get("/admin", function(req, res) {
   return res.sendFile(__dirname + '/dist/index.html')
 })
 
