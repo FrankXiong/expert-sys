@@ -39,7 +39,6 @@ app.use(session({
 	})
 }));
 
-
 app.set('views', './view')
 app.set('view engine', 'html')
 
