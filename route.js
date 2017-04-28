@@ -1,5 +1,3 @@
-var path = require('path');
-
 module.exports = function(app) {
   app.use('/api/user', require('./api/user'));
   app.use('/api/rules', require('./api/rule'));

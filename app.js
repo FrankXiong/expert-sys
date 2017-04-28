@@ -13,6 +13,7 @@ var history = require('connect-history-api-fallback');
 
 var app = express();
 
+
 var env = process.env.NODE_ENV;
 console.log(env);
 
@@ -42,13 +43,22 @@ app.use(session({
 	})
 }));
 
-app.use(express.static(path.join(__dirname, '/public')))
 
-app.get("/admin", function(req, res) {
-  return res.sendFile(__dirname + '/dist/index.html')
+var static_addr = path.join(__dirname, '/public')
+
+app.use(express.static(path.join(static_addr, '/mob')))
+app.use(express.static(path.join(static_addr, '/admin')))
+
+app.get("/mob", function(req, res) {
+	return res.sendFile(static_addr + '/mob/index.html')
 })
 
-require('./route')(app)
+app.get("/admin", function(req, res) {
+	console.log('aa')
+  return res.sendFile(static_addr + '/admin/index.html')
+})
+
+require('./route.js')(app)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
