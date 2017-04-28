@@ -13,10 +13,6 @@ var history = require('connect-history-api-fallback');
 
 var app = express();
 
-
-var env = process.env.NODE_ENV;
-console.log(env);
-
 // Use native promises
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongo.uri);
@@ -44,21 +40,22 @@ app.use(session({
 }));
 
 
+app.set('views', './view')
+app.set('view engine', 'html')
+
 var static_addr = path.join(__dirname, '/public')
 
-app.use(express.static(path.join(static_addr, '/mob')))
-app.use(express.static(path.join(static_addr, '/admin')))
+app.use(express.static(static_addr))
 
 app.get("/mob", function(req, res) {
-	return res.sendFile(static_addr + '/mob/index.html')
+	return res.render('mob', {})
 })
 
 app.get("/admin", function(req, res) {
-	console.log('aa')
-  return res.sendFile(static_addr + '/admin/index.html')
+  return res.render('admin', {})
 })
 
-require('./route.js')(app)
+require('./route')(app)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
