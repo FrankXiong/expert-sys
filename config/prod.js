@@ -1,5 +1,5 @@
 module.exports = {
-  port: 3001,
+  port: 8003,
   env: 'prod',
   mongo: {
     uri: 'mongodb://121.42.189.247/expert-sys'
